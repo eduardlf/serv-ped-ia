@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { orderRoutes } from './routes/orderRoutes';
-
+import { mockProducts } from './banco/mockProducts';
 // Load environment variables
 dotenv.config();
 
@@ -15,6 +15,10 @@ app.use(express.json());
 
 // Routes
 app.use('/api/orders', orderRoutes);
+
+app.get('/api/products', (req, res) => {
+  res.json(mockProducts);
+});
 
 // Health check endpoint
 app.get('/health', (req, res) => {

@@ -1,56 +1,21 @@
-import axios from 'axios';
-import { ChatMessage, ChatRequest, ChatResponse } from '../types';
+import axios from "axios";
 
-class AIService {
-  private baseUrl: string;
+export class AIService {
+  private aiUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.AI_SERVICE_URL || 'http://127.0.0.1:5000';
+    this.aiUrl = process.env.AI_SERVICE_URL || "http://127.0.0.1:5000";
   }
 
-  async chatCompletion(messages: ChatMessage[], maxTokens: number = 128): Promise<string> {
-    try {
-      const request: ChatRequest = {
-        messages,
-        max_tokens: maxTokens
-      };
+  async chatCompletion(messages: any[], tools?: any[]) {
+    const body: any = {
+      messages,
+      max_tokens: 128,
+    };
+    if (tools) body.tools = tools;
 
-      const response = await axios.post<ChatResponse>(
-        `${this.baseUrl}/v1/chat/completions`,
-        request,
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          timeout: 30000 // 30 seconds timeout
-        }
-      );
-
-      if (response.data?.choices?.[0]?.message?.content) {
-        return response.data.choices[0].message.content;
-      }
-
-      throw new Error('Invalid response format from AI service');
-    } catch (error) {
-      console.error('AI Service Error:', error);
-      throw new Error('Failed to communicate with AI service');
-    }
-  }
-
-  async generateOrderFromQuery(query: string): Promise<string> {
-    const messages: ChatMessage[] = [
-      {
-        role: 'system',
-        content: 'You are an AI assistant that helps create order summaries. Parse the user query and create a structured order with items, quantities, and estimated prices in JSON format.'
-      },
-      {
-        role: 'user',
-        content: query
-      }
-    ];
-
-    return this.chatCompletion(messages, 256);
+    const response = await axios.post(`${this.aiUrl}/v1/chat/completions`, body);
+    const message = response.data.choices[0].message.content;
+    return { message };
   }
 }
-
-export const aiService = new AIService();

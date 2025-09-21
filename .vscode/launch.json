@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    // roda o comando debug do package.json
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug TypeScript",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "debug"],
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}

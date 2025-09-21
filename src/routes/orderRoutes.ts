@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { orderController } from '../controllers/orderController';
+import { OrderController } from '../controllers/orderController';
 
 const router = Router();
+const orderController = new OrderController();
 
 // Create order from AI query
 router.post('/', orderController.createOrder.bind(orderController));
